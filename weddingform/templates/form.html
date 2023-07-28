@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta
+      charset="UTF-8"
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>婚禮參加意願調查</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        font-size: 20px;
+        line-height: 1.6;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      form {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+
+      .rdobutton_radio {
+        width: 20px;
+        height: 20px;
+      }
+
+      input[type='text'],
+      input[type='tel'],
+      input[type='number'] {
+        width: 50%;
+        padding: 12px;
+        font-size: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+      }
+
+      input[type='radio'] {
+        margin-right: 5px;
+      }
+
+      button[type='submit'] {
+        display: block;
+        width: 50%;
+        margin: 20px auto;
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        font-size: 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      button[type='submit']:hover {
+        background-color: #45a049;
+      }
+
+      #additionalAttendees,
+      #childSeatInput,
+      #vegetarianInput {
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 8px;
+      }
+      .liff-alert {
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>婚禮參加意願調查</h2>
+    <form id="form">
+      <label>您的姓名　　　<input type="text" id="name" required /></label>
+
+      <label>您的聯絡電話　<input type="tel" id="phone" required /></label>
+
+      <label
+        >預計幾位出席　<input
+          type="text"
+          pattern="[0-9]+"
+          id="attendees"
+          value="1"
+          required
+          title="請輸入正整數"
+          onchange="showAdditionalAttendeesInputs(this.value)"
+      /></label>
+
+      <div id="additionalAttendees" style="display: none">
+        <!-- 這裡用 JavaScript 來動態生成陪同參加者的輸入框 -->
+      </div>
+
+      <input
+        type="radio"
+        name="childSeat"
+        value="0"
+        checked
+        onclick="showChildSeatInput(false)"
+        class="rdobutton_radio"
+      />不用兒童座椅
+      <input
+        type="radio"
+        name="childSeat"
+        value="0"
+        onclick="showChildSeatInput(true)"
+        class="rdobutton_radio"
+      />需要兒童座椅<br />
+
+      <div id="childSeatInput" style="display: none">
+        <label
+          >兒童座椅張數　<input
+            type="text"
+            id="childSeat"
+            pattern="[0-9]+"
+            value="0"
+            required
+            title="請輸入正整數"
+        /></label>
+      </div>
+
+      <input
+        type="radio"
+        name="foodPreference"
+        value="omnivore"
+        checked
+        onclick="showVegetarianInput(false)"
+        class="rdobutton_radio"
+      />葷食
+      <input
+        type="radio"
+        name="foodPreference"
+        value="vegetarian"
+        onclick="showVegetarianInput(true)"
+        class="rdobutton_radio"
+      />素食<br />
+
+      <div id="vegetarianInput" style="display: none">
+        <label
+          >素食人數　<input
+            type="text"
+            pattern="[0-9]+"
+            id="vegetarianCount"
+            value="0"
+            required
+            title="請輸入正整數"
+        /></label>
+      </div>
+      <button type="submit">提交</button>
+      <div id="result" style="display: none"></div>
+    </form>
+
+    <script>
+      const form = document.getElementById('form');
+      const childSeatInput = document.getElementById('childSeatInput');
+      const vegetarianInput = document.getElementById('vegetarianInput');
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        // 取得表單資料
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const attendees = document.getElementById('attendees').value;
+        const childSeat = document.querySelector(
+          'input[name="childSeat"]:checked',
+        ).value;
+        const childSeatCount = document.getElementById('childSeat').value;
+        if (parseInt(childSeatCount) > parseInt(attendees)) {
+          alert('兒童座椅數量有誤');
+          return;
+        }
+        const vegetarianCount =
+          document.getElementById('vegetarianCount').value;
+        const omnivoreCount = parseInt(attendees) - parseInt(vegetarianCount);
+        if (omnivoreCount < 0) {
+          alert('素食人數不可大於出席人數');
+          return;
+        }
+        const additionalAttendeesDiv = document.getElementById(
+          'additionalAttendees',
+        );
+        const additionalAttendeesName =
+          additionalAttendeesDiv.querySelectorAll('input[type="text"]');
+        const additionalAttendeesArray = [];
+
+        additionalAttendeesName.forEach((input) => {
+          additionalAttendeesArray.push(input.value);
+        });
+
+        const additionalAttendeesString =
+          additionalAttendeesArray.length > 0
+            ? additionalAttendeesArray.join(', ')
+            : '無';
+
+        // 取得 uuid
+        var url = window.location.href;
+        var queryString = url.split('?')[1];
+        var params = {};
+        if (queryString) {
+          var paramPairs = queryString.split('&');
+          for (var i = 0; i < paramPairs.length; i++) {
+            var paramPair = paramPairs[i].split('=');
+            var key = decodeURIComponent(paramPair[0]);
+            var value = decodeURIComponent(paramPair[1]);
+            params[key] = value;
+          }
+        }
+        var uuid = params['uuid'];
+
+        const formData = {
+          uuid,
+          name,
+          phone,
+          attendees,
+          additionalAttendeesString,
+          childSeatCount,
+          omnivoreCount,
+          vegetarianCount,
+        };
+
+        let message = `
+        報名成功
+        姓名：${name}
+        聯絡電話：${phone}
+        出席人數：${attendees}
+        陪同參加者：${additionalAttendeesString}
+        準備兒童座椅：${childSeatCount}
+        葷食：${omnivoreCount}
+        素食：${vegetarianCount}`;
+
+        fetch('../create_user/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Response from server:', data);
+            alert(message);
+            window.close(); // Close the current window
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred while submitting the form');
+          });
+      });
+      // 顯示陪同參加者的輸入框
+      function showAdditionalAttendeesInputs(count) {
+        const additionalAttendeesDiv = document.getElementById(
+          'additionalAttendees',
+        );
+        additionalAttendeesDiv.innerHTML = ''; // 清空先前生成的輸入框
+
+        if (count > 1) {
+          additionalAttendeesDiv.style.display = 'block'; // 將父元素設置為 block 容器
+          for (let i = 1; i < count; i++) {
+            const inputLabel = document.createElement('label');
+            inputLabel.textContent = `陪同參加者姓名　`;
+            const inputField = document.createElement('input');
+            inputField.type = 'text';
+            inputField.name = `additionalAttendee${i}`;
+            inputField.required = true;
+
+            inputLabel.style.display = 'inline-block'; // 將 label 設置為內聯元素，使其在同一行顯示
+            inputField.style.display = 'inline-block'; // 將 input 設置為內聯元素，使其在同一行顯示
+
+            additionalAttendeesDiv.appendChild(inputLabel);
+            additionalAttendeesDiv.appendChild(inputField);
+          }
+        } else {
+          additionalAttendeesDiv.style.display = 'none';
+        }
+      }
+
+      // 顯示或隱藏兒童座椅輸入框
+      function showChildSeatInput(show) {
+        const childSeatInput = document.getElementById('childSeatInput');
+        childSeatInput.style.display = show ? 'block' : 'none';
+        if (!show) {
+          // 若隱藏輸入框則清空兒童座椅張數
+          document.getElementById('childSeatCount').value = '0';
+        }
+      }
+
+      // 顯示或隱藏素食人數輸入框
+      function showVegetarianInput(show) {
+        const vegetarianInput = document.getElementById('vegetarianInput');
+        vegetarianInput.style.display = show ? 'block' : 'none';
+        if (!show) {
+          // 若隱藏輸入框則清空素食人數
+          document.getElementById('vegetarianCount').value = '0';
+        }
+      }
+    </script>
+  </body>
+</html>
