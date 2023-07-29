@@ -3,6 +3,6 @@ from . import views
 
 urlpatterns = [
     path('callback', views.callback),
-    path('form/', views.form, name='form'),
+    path('index/', views.index, name='index'),
     path('create_user/', views.create_user, name='create_user'),
 ]

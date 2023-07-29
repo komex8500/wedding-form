@@ -55,11 +55,28 @@ def route(event):
             reply_text(event, user_data)
         else:
             reply_text(event, settings.ENDPOINT_URL +
-                       "/weddingform/form?uuid="+event.source.user_id)
+                       "/weddingform/index?uuid="+event.source.user_id)
 
 
-def form(request):
-    return render(request, 'form.html')
+def index(request):
+    if request.method == 'GET':
+        try:
+            uuid = request.GET.get('uuid')
+            with pymysql.connect(**CONN_OPTIONS) as conn:
+                cursor = conn.cursor()
+                select_sql = f"SELECT COUNT(*) FROM {settings.DATABASE}.user WHERE uuid = '{uuid}';"
+                cursor.execute(select_sql)
+                result = cursor.fetchone()
+                count = result[0]
+                if count > 0:
+                    user_data = get_user(uuid).replace('\n', '<br>')
+                    enlarged_user_data = f'<head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></head><div style="font-size: 20px;">{user_data}</div>'
+                    return HttpResponse(enlarged_user_data, status=200)
+                else:
+                    return render(request, 'form.html')
+        except Exception as e:
+            return HttpResponse("Failed: " + str(e), status=500)
+    return HttpResponse("Bad Request: Only GET method is supported.", status=400)
 
 
 def get_user(uuid):
