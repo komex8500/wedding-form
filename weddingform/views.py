@@ -133,54 +133,31 @@ def create_user(request):
             vegetarianCount = data.get('vegetarianCount')
             with pymysql.connect(**CONN_OPTIONS) as conn:
                 cursor = conn.cursor()
-
-                # Check if the UUID already exists in the database
-                select_sql = f"SELECT COUNT(*) FROM {settings.DATABASE}.user WHERE uuid = '{uuid}';"
-                cursor.execute(select_sql)
-                result = cursor.fetchone()
-                count = result[0]
-                if count > 0:
-                    # If the UUID exists, perform an UPDATE operation
-                    update_sql = f'''
-                            UPDATE {settings.DATABASE}.user
-                            SET
-                                `name` = '{name}',
-                                `phone` = '{phone}',
-                                `attendees` = '{attendees}',
-                                `additionalAttendees` = '{additionalAttendeesString}',
-                                `childSeatCount` = '{childSeatCount}',
-                                `omnivoreCount` = '{omnivoreCount}',
-                                `vegetarianCount` = '{vegetarianCount}'
-                            WHERE `uuid` = '{uuid}';
-                        '''
-                    cursor.execute(update_sql)
-                else:
-                    sql = f'''
-                        INSERT INTO {settings.DATABASE}.user(
-                            `uuid`,
-                            `name`,
-                            `phone`,
-                            `attendees`,
-                            `additionalAttendees`,
-                            `childSeatCount`,
-                            `omnivoreCount`,
-                            `vegetarianCount`
-                            ) VALUES (
-                            '{uuid}',
-                            '{name}',
-                            '{phone}',
-                            '{attendees}',
-                            '{additionalAttendeesString}',
-                            '{childSeatCount}',
-                            '{omnivoreCount}',
-                            '{vegetarianCount}'
-                            );
-                        '''
-                    cursor.execute(sql)
+                sql = f'''
+                    INSERT INTO {settings.DATABASE}.user(
+                        `uuid`,
+                        `name`,
+                        `phone`,
+                        `attendees`,
+                        `additionalAttendees`,
+                        `childSeatCount`,
+                        `omnivoreCount`,
+                        `vegetarianCount`
+                        ) VALUES (
+                        '{uuid}',
+                        '{name}',
+                        '{phone}',
+                        '{attendees}',
+                        '{additionalAttendeesString}',
+                        '{childSeatCount}',
+                        '{omnivoreCount}',
+                        '{vegetarianCount}'
+                        );
+                    '''
+                cursor.execute(sql)
                 conn.commit()
                 return JsonResponse({'message': 'User created successfully.'})
         except IntegrityError as e:
-            # Handle unique constraint violation (if UUID already exists)
             parse_exception(e)
             return JsonResponse({'message': 'UUID already exists. Please provide a different UUID.'})
         except Exception as e:

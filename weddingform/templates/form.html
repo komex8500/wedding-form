@@ -228,18 +228,6 @@
           vegetarianCount,
         };
 
-        let message = `
-        報名成功
-        姓名：${name}
-        聯絡電話：${phone}
-        出席人數：${attendees}
-        陪同參加者：${additionalAttendeesString}
-        準備兒童座椅：${childSeatCount}
-        葷食：${omnivoreCount}
-        素食：${vegetarianCount}
-        
-        感謝您的填寫，視窗已可關閉`;
-
         fetch('../create_user/', {
           method: 'POST',
           headers: {
@@ -250,12 +238,12 @@
           .then((response) => response.json())
           .then((data) => {
             console.log('Response from server:', data);
-            alert(message);
-            window.close(); // Close the current window
+            alert('報名成功');
+            location.reload();
           })
           .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred while submitting the form');
+            alert('報名失敗，請聯繫客服');
           });
       });
       // 顯示陪同參加者的輸入框
