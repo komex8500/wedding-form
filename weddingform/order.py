@@ -54,7 +54,7 @@ class Order:
         self.ask_child()
         self.ask_vegetarian()
         self.reply(
-            f'報名成功\n以下為您的報名資訊\n\n您的姓名：{self.name}\n您的聯絡電話：{self.phone}\n預計幾位出席：{self.member}\n兒童座椅張數：{self.child}\n素食人數：{self.vegetarian}\n\n如需修改報名資訊，請聯繫客服')
+            f'報名成功\n以下為您的報名資訊\n\n您的姓名：{self.name}\n您的聯絡電話：{self.phone}\n預計幾位出席：{self.member}\n兒童座椅張數：{self.child}\n素食人數：{self.vegetarian}\n\n如需修改報名資訊，請聯繫我們')
 
     def ask(self, *msg):
         self.reply(*msg)

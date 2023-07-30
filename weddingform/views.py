@@ -108,7 +108,7 @@ def get_user(uuid):
                 f"葷食：{user_data['omnivoreCount']}\n"
                 f"素食：{user_data['vegetarianCount']}\n"
                 f"備註：{user_data['remark']}\n\n"
-                f"如需修改報名資訊，請聯繫客服"
+                f"如需修改報名資訊，請聯繫我們"
             )
 
             return result
