@@ -156,13 +156,13 @@ def create_user(request):
                     '''
                 cursor.execute(sql)
                 conn.commit()
-                return JsonResponse({'message': 'User created successfully.'})
+                return JsonResponse({'message': 'User created successfully.'}, status=201)
         except IntegrityError as e:
             parse_exception(e)
-            return JsonResponse({'message': 'UUID already exists. Please provide a different UUID.'})
+            return JsonResponse({'message': 'UUID already exists. Please provide a different UUID.'}, status=409)
         except Exception as e:
             parse_exception(e)
-            return JsonResponse({'message': str(e)})
+            return JsonResponse({'message': str(e)}, status=500)
         finally:
             cursor.close()
 
