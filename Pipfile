@@ -12,6 +12,7 @@ pymysql = "*"
 tronpy = "*"
 pillow = "*"
 base58 = "*"
+cryptography = "*"
 
 [dev-packages]
 
