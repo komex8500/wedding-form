@@ -73,7 +73,7 @@ def index(request):
                     enlarged_user_data = f'<head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></head><div style="font-size: 20px;">{user_data}</div>'
                     return HttpResponse(enlarged_user_data, status=200)
                 else:
-                    return render(request, 'form.html')
+                    return render(request, 'close.html')
         except Exception as e:
             return HttpResponse("Failed: " + str(e), status=500)
     return HttpResponse("Bad Request: Only GET method is supported.", status=400)
